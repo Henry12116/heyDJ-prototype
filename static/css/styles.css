@@ -17,3 +17,25 @@ ol, ul {
 	list-style:none;
 	padding: 0px;
 }
+
+form .back{
+    float: right;
+}
+
+.col-md-6{
+    display: inline-block;
+    padding-left: 30px;
+    max-width: 50%;
+}
+
+.col-md-6 img{
+    margin-bottom: 90%;
+}
+
+div label{
+    padding-right: 20px;
+}
+
+div #create{
+    margin-top:10px;
+}

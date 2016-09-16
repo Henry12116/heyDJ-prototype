@@ -11,12 +11,15 @@
         </header>
         <main>
             <h2><%= pageTitle %></h2>
+            <form method="GET" action="/home">
+                <button type="submit" name="leave" class="back">Back</button>
+            </form>
             <hr/>
             <ul>
                 <% events.forEach(function(event) { %>
                     <h3><%=event.eventName%> </h3>
                     <li><a href="/find-events/<%= event._id%>"> Hosted by: <%= event.djName%> @ <%= event.location%> with <%= event.attendees%> people!</a></li>
-                <% }) %>
+                    <% }) %>
             </ul>
         </main>
     </div>

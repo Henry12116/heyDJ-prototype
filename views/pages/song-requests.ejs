@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+        </header>
+        <main>
+            <h2><%= pageTitle %></h2>
+            <hr/>
+            <ul>
+                <% song_results.forEach(function(event) { %>
+                    <li><%= event.songName%> has a Rating of: <%= event.rating%></li>
+					<div id="whateverID">
+					<iframe width="640" height="390" frameborder="0" title="YouTube video player" type="text/html" src="http://www.youtube.com/embed/<%= event.songID%>?enablejsapi=1">
+					</iframe>
+                    <form method="POST" action="/vote">
+                        <input type="hidden" name="song_id" id = "song_id" value="<%= event.songID%>">
+                        <input type="hidden" name="event_id" id = "event_id" value="<%= eventID%>">
+						<button type="submit" name="vote" id = "vote" value="up">Vote up</button>
+						<button type="submit" name="vote" id = "vote" value="down">Vote Down</button>
+				    </form>
+                <% }) %>
+            </ul>
+            <br>
+            <form method="POST" action="create-request">
+                <input type="hidden" name="event_id" id="event_id" value="<%= eventID%>">
+                <label for="song-name"> Song Name:  </label> 
+					<input id="songname" type="text" name= "songname" placeholder="Rihanna - Work (Explicit) ft. Drake"/><br/>
+				<label for="songid"> Song Link: </label>
+				    <input id="songid" type="text" name= "songid" placeholder="https://www.youtube.com/watch?v=HL1UzIK-flA"/> <br/>
+				<input type="submit" id="submit-request" value="Submit" /> 
+            </form>
+        </main>
+    </div>
+
+    <% include ../partials/scripts %>
+</body>
+
+</html>

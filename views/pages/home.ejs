@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+        </header>
+        <main>
+            <h2><%= pageTitle %></h2>
+            <form action="/create-event" method="GET">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">DJ</button>
+                </div>
+            </form>
+            <form action="/find-events" method="GET">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">Party Goer</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <% include ../partials/scripts %>
+</body>
+
+</html>

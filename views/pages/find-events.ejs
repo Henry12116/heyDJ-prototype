@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+        </header>
+        <main>
+            <h2><%= pageTitle %></h2>
+            <hr/>
+            <ul>
+                <% events.forEach(function(event) { %>
+                    <h3><%=event.eventName%> </h3>
+                    <li><a href="/find-events/<%= event._id%>"> Hosted by: <%= event.djName%> @ <%= event.location%> with <%= event.attendees%> people!</a></li>
+                <% }) %>
+            </ul>
+        </main>
+    </div>
+
+    <% include ../partials/scripts %>
+</body>
+
+</html>

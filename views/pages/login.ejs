@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+        </header>
+        <main>
+            <h2><%= pageTitle %></h2> 
+			
+			<div class="login">
+				<h2> Please login! </h2>
+				<form method="POST" action="login">
+						<label for="username" class="col-sm-4 control-label"> Username:  </label> 
+						<div class="col-sm-8">
+							<input id="username" type="text" name= "username" /> <br/>
+						</div>
+						
+						<label for="password" class="col-sm-4 control-label"> Password: </label>
+						<div class="col-sm-8">
+							<input id="password" type="password" name= "password" /> <br/>
+						</div>
+					
+						<input type="submit" id="login" value="Login" /> 
+				</form>
+			
+			</div>
+			
+			<div class="signup">
+				<h2> Please signup! </h2>
+				<form method="POST" action="signup">
+						<label for="username-signup" class="col-sm-4 control-label"> Username:  </label> 
+						<div class="col-sm-8">
+							<input id="username-signup" type="text" name= "username" /> <br/>
+						</div>
+						
+						<label for="password-signup" class="col-sm-4 control-label"> Password: </label>
+						<div class="col-sm-8">
+							<input id="password-signup" type="password" name= "password" /> <br/>
+						</div>
+					
+						<input type="submit" id="signup" value="Sign Up" /> 
+				</form>
+			</div>
+			
+        </main>
+    </div>
+
+    <% include ../partials/scripts %>
+</body>
+
+</html>

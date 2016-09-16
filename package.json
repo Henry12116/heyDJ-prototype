@@ -1,0 +1,27 @@
+{
+  "name": "hey-dj",
+  "version": "1.0.0",
+  "description": "A simple way to make song requests",
+  "main": "server.js",
+  "author": "Mark, Bill, Henry",
+  "dependencies": {
+    "async": "~0.2.8",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.1",
+    "cookie-parser": "^1.4.1",
+    "express": "~3.2.4",
+    "mongodb": "2.1.18",
+    "guid": "0.0.12",
+    "ejs": "^2.4.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "hey",
+    "dj",
+    "cool"
+  ],
+  "license": "ISC"
+}

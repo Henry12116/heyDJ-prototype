@@ -26,7 +26,7 @@ MongoClient.connect(fullMongoUrl)
 
 
         //Create a new Event - used only by djs
-        exports.makeEvent = function(eventName, djName, location, date, privateEvent) {
+        exports.makeEvent = function(eventName, djName, location, date, privateEvent, partyCode) {
             if(!eventName){
                 return Promise.reject("You need to provide an event name");
             }
@@ -46,7 +46,7 @@ MongoClient.connect(fullMongoUrl)
                 privateEvent = true;
             }
             return eventsCollection.insertOne({ _id:Guid.create().toString(), eventName: eventName,
-                djName:djName, location:location, privateEvent:privateEvent, eventCode: null, eventDate:date, attendees: 0, songList: [], songRequests:[] }).then(function(newDoc) {
+                djName:djName, location:location, privateEvent:privateEvent, eventCode: partyCode, eventDate:date, attendees: 0, songList: [], songRequests:[] }).then(function(newDoc) {
                 console.log("makeEvent has created an item with id " + newDoc.insertedId);
                 return newDoc.insertedId;
             });
@@ -115,6 +115,15 @@ MongoClient.connect(fullMongoUrl)
                 if (listOfEvents.length === 0) return Promise.reject( "Could not find event with ID " + eventID);
                 return listOfEvents[0];
             });
+        };
+
+        //Finds an event by party code
+        exports.findPrivate = function(partyCode){
+          if(!partyCode) return Promise.reject("You must provide a party code");
+          return eventsCollection.find({eventCode:partyCode}).limit(1).toArray().then(function(listOfEvents) {
+              if(listOfEvents.length === 0) return Promise.reject("Could not find event with party code of " + partyCode);
+              return listOfEvents[0];
+          });
         };
 
         //Remove an event from the eventCollection, and from all users

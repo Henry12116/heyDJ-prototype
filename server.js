@@ -81,13 +81,17 @@ app.post("/party", function (request, response) {
     var locationName = request.body.location;
     var eventDate = request.body.eventDate;
     var privateEvent = request.body.private;
+    var partyCode = "";
     if(privateEvent) {
         privateEvent = true;
+        var partyCode = "letsparty";
+        console.log("Your party code is " + partyCode);
     }
     else {
         privateEvent = false;
+        var partyCode = "";
     }
-    myData.makeEvent(eventName, djName, locationName, eventDate, privateEvent).then(function(result) {
+    myData.makeEvent(eventName, djName, locationName, eventDate, privateEvent, partyCode).then(function(result) {
         myData.findEvent(result).then(function(result2) {
             response.redirect("/find-events/:" + result2._id);
         });
@@ -230,10 +234,32 @@ app.get("/find-events/:id", function (request, response) {
         });
 });
 
-//Get route to find all events
+app.get("/private-event", function(request,response){
+  response.render("pages/private-event.ejs", {pageTitle:"Enter private event code."});
+});
+
+app.post("/find-private", function(request, response){
+  var code = request.body.privateCode;
+
+  myData.findPrivate(code).then(function (result){
+    var selected_event = result;
+
+    response.render('pages/event', {event: selected_event});
+  }).catch(function(err){
+      console.log(err.message);
+      response.render("pages/login", {pageTitle: "Something went wrong"});
+  });
+});
+
+//get route to select between finding public events or join a private one
 app.get("/find-events", function (request, response) {
+  response.render("pages/event-type", {pageTitle:"What kind of event?"});
+});
+
+//Get route to find all public events
+app.get("/public-events", function (request, response){
     myData.getEvents().then(function (result){
-        var found_events = result; 
+        var found_events = result;
         response.render("pages/find-events", { pageTitle: "Find an event!", events: found_events});
     });
 });

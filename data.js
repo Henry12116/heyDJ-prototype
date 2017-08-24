@@ -16,7 +16,7 @@ runStartup().then(function(allEvents) {
 
 MongoClient.connect(fullMongoUrl)
     .then(function(db) {
-        
+
         //Setting up collection for events in this database
         var eventsCollection = db.collection("events");
 
@@ -24,22 +24,22 @@ MongoClient.connect(fullMongoUrl)
         //Setting up collection for users in this database
         var usersCollection = db.collection("users");
 
-        
+
         //Create a new Event - used only by djs
         exports.makeEvent = function(eventName, djName, location, date, privateEvent) {
-            if(!eventName){ 
+            if(!eventName){
                 return Promise.reject("You need to provide an event name");
             }
-            if(!djName){ 
+            if(!djName){
                 return Promise.reject("You need to provide a sick DJ name");
             }
-            if(!location){ 
+            if(!location){
                 return Promise.reject("You need to provide a location!");
             }
-            if(!date){ 
+            if(!date){
                 return Promise.reject("You need to provide a date!");
             }
-            if(!privateEvent){ 
+            if(!privateEvent){
                 privateEvent = false;
             }
             else {
@@ -51,25 +51,25 @@ MongoClient.connect(fullMongoUrl)
                 return newDoc.insertedId;
             });
         };
-        
+
         //Create a new Event - used only by djs
         exports.getEvents = function() {
             return eventsCollection.find().toArray();
         };
-        
+
         //Create a new user - used for registering
         exports.makeUser = function(username, password, djStatus) {
             if (!username)  return Promise.reject("You must provide a username");
             if (!password) return Promise.reject("You must provide a valid password");
-			
+
 			var encryptedPassword = bcrypt.hashSync(password);
 			console.log("Making a User!");
-            return usersCollection.insertOne({ _id: Guid.create().toString(), username: username, encryptedPassword: encryptedPassword, 
+            return usersCollection.insertOne({ _id: Guid.create().toString(), username: username, encryptedPassword: encryptedPassword,
             	currentSessionId: null, dj: djStatus, theirEvents: [], pastEvents: [] }).then(function(newDoc) {
                 return newDoc.insertedId;
             });
         };
-        
+
         //Add an event a user has attended to their list of past events
         exports.addPastEvent = function (sessionID, eventID) {
             if (!sessionID) return Promise.reject("You must provide a session and event ID");
@@ -81,7 +81,7 @@ MongoClient.connect(fullMongoUrl)
                 }
             });
         };
-        
+
         //Add an event to a users event array, without incrementing the number of attendees (RSVP)
         exports.addUserEvent = function(userID, eventID) {
             if(!userID || !eventID) return Promise.reject("You must provide a session ID and event ID");
@@ -89,7 +89,7 @@ MongoClient.connect(fullMongoUrl)
                     return usersCollection.updateOne({_id: userID},{$push: {theirEvents: eventID}});
             });
         };
-        
+
         //Add an event to a users event array - when user officially joins an event (JOIN)
         exports.joinEvent = function(userID, eventID) {
             if(!userID || !eventID) return Promise.reject("You must provide a session ID and event ID");
@@ -99,7 +99,7 @@ MongoClient.connect(fullMongoUrl)
                     });
             });
         };
-        
+
         //Remove a user event - used when user "un-RSVP's"
         exports.removeUserEvent = function(sessionID, eventID) {
             if(!sessionID || !eventID) return Promise.reject("You must provide a session and Event ID");
@@ -107,7 +107,7 @@ MongoClient.connect(fullMongoUrl)
                 return eventsCollection.updateOne({_id:eventID},{$inc: {attendees: -1}});
             });
         };
-        
+
         //Find an event by eventID
         exports.findEvent = function(eventID) {
             if(!eventID) return Promise.reject("You must provide an event ID");
@@ -116,7 +116,7 @@ MongoClient.connect(fullMongoUrl)
                 return listOfEvents[0];
             });
         };
-        
+
         //Remove an event from the eventCollection, and from all users
         exports.deleteEvent = function(eventID) {
             if(!eventID) return Promise.reject("You must provide an event ID");
@@ -124,7 +124,7 @@ MongoClient.connect(fullMongoUrl)
                 return eventsCollection.remove({_id: eventID});
             });
         };
-        
+
         //Find a song
         exports.findSong = function(songID) {
             if(!songID) return Promise.reject("You must provide a song ID");
@@ -133,7 +133,7 @@ MongoClient.connect(fullMongoUrl)
                 return listOfSongs[0];
             });
         };
-        
+
         //Get all song requests for an event
         exports.getSongRequests = function(eventID) {
             if(!eventID) return Promise.reject("You must provide an event ID");
@@ -141,7 +141,7 @@ MongoClient.connect(fullMongoUrl)
                 return whatWeJustGot[0].songRequests;
             });
         };
-        
+
         //Make a song request
         exports.makeSongRequest = function(eventID, songID, songName) {
             if(!eventID) return Promise.reject("You must provide an event ID");
@@ -149,28 +149,28 @@ MongoClient.connect(fullMongoUrl)
             if(!songName) return Promise.reject("You must provide a song name");
             return eventsCollection.updateOne({_id: eventID}, {$push: {songRequests: {rating: 0, songID: songID, songName: songName}}});
         };
-        
+
         //Upvote a song in an event
         exports.upvoteRequest = function(eventID, songID) {
             if(!eventID) return Promise.reject("You must provide an event ID");
             if(!songID) return Promise.reject("You must provide a song ID");
             return eventsCollection.update({_id: eventID, "songRequests.songID": songID}, {$inc: {"songRequests.$.rating": 1}});
         };
-        
+
         //Downvote a song in an event
         exports.downvoteRequest = function(eventID, songID) {
             if(!eventID) return Promise.reject("You must provide an event ID");
             if(!songID) return Promise.reject("You must provide a song ID");
             return eventsCollection.update({_id: eventID, "songRequests.songID": songID}, {$inc: {"songRequests.$.rating": -1}});
         };
-        
+
         //Add song to setlist
         exports.makeSonglistAddition = function(eventID, songID) {
             if(!eventID) return Promise.reject("You must provide an event ID");
             if(!songID) return Promise.reject("You must provide a song ID");
             return eventsCollection.updateOne({_id: eventID}, {$push: {songList: {songID: songID}}});
         };
-        
+
         //Remove song from setlist
         //Add song to setlist
         exports.removeSonglistAddition = function(eventID, songID) {
@@ -178,7 +178,7 @@ MongoClient.connect(fullMongoUrl)
             if(!songID) return Promise.reject("You must provide a song ID");
             return eventsCollection.updateOne({_id: eventID}, {$pull: {songList: {songID: songID}}});
         };
-        
+
         //Updates a user with new information - Probably deprecated, but whatever
         exports.updateUser = function(sessID,fn, ln, hob, pn){
         	if (!sessID || !fn || !ln || !hob || !pn){
@@ -190,13 +190,13 @@ MongoClient.connect(fullMongoUrl)
         	return usersCollection.updateOne({ currentSessionId: sessID }, {$set: { "profile.firstName":fn,"profile.lastName":ln,"profile.hobby":hob,"profile.petName":pn}}).then(function(){
                 console.log("done!");
                 return true;
-            }); 
+            });
         };
 
         exports.getUserbyID = function(id) {
             if (!id) return Promise.reject("You must provide an ID");
 
-            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can 
+            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can
             // easily iterate like a normal array
             console.log(id);
             return usersCollection.find({ currentSessionId: id }).limit(1).toArray().then(function(listOfUsers) {
@@ -208,14 +208,14 @@ MongoClient.connect(fullMongoUrl)
                     console.log(id+ " is good!");
                     return listOfUsers[0];
                 }
-                
+
             });
         };
-        
+
         exports.getUserbyUP = function(user,pass) {
             if (!user) return Promise.reject("You must provide an username");
-            
-            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can 
+
+            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can
             // easily iterate like a normal toArray
             return usersCollection.find({ username: user }).limit(1).toArray().then(function(listOfUsers) {
                 if (listOfUsers.length === 0) return Promise.reject("Could not find User with username of " + user);
@@ -227,11 +227,11 @@ MongoClient.connect(fullMongoUrl)
                 return listOfUsers[0];
             });
         };
-        
+
         exports.getUserbyUser = function(user) {
             if (!user) return Promise.reject("You must provide an username");
             // var bbool=true;
-            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can 
+            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can
             // easily iterate like a normal toArray
             return usersCollection.find({ username: user }).limit(1).toArray().then(function(listOfUsers) {
                 console.log(listOfUsers);
@@ -267,25 +267,25 @@ MongoClient.connect(fullMongoUrl)
         });
         };
 
-      
+
         exports.getUserSessID = function(user) {
             if (!user) return Promise.reject("You must provide a username");
-            
-            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can 
+
+            // by calling .toArray() on the function, we convert the Mongo Cursor to a promise where you can
             // easily iterate like a normal toArray
             return usersCollection.find({ username: user }).limit(1).toArray().then(function(listOfUsers) {
-               
+
                 return  listOfUsers[0].currentSessionId;
             });
         };
-        
+
         exports.logoutUser = function(sid){
              if (!sid) return Promise.reject("You must provide a SessionID");
              return usersCollection.find({  currentSessionId: sid }).limit(1).toArray().then(function(listOfUsers) {
-               
+
                 usersCollection.updateOne({ currentSessionId: sid}, {$set: {currentSessionId: null}});
                 return true;
             });
         };
-        
+
     });

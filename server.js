@@ -18,15 +18,15 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(cookieParser());
-// This middleware will activate for every request we make to 
+// This middleware will activate for every request we make to
 // any path starting with /assets;
-// it will check the 'static' folder for matching files 
+// it will check the 'static' folder for matching files
 app.use('/assets', express.static('static'));
 
 // Setup your routes here!
 
 //Post route for signup from the login page
-app.post("/signup", function (request, response) { 
+app.post("/signup", function (request, response) {
     var user = request.body.username;
     var pass = request.body.password;
 
@@ -55,18 +55,18 @@ app.post("/song-requests/create-request", function(request, response) {
     var songName = request.body.songname;
     var songLink = request.body.songid;
     var eventID = request.body.event_id;
-    
+
     if(!songName) response.render("pages/song-requests-error");
     if(!songLink) response.render("pages/song-requests-error");
-    
+
     console.log("The songLink is this: " + songLink);
-    
+
     //This replaces extraneous parts of the youtube link
     songLink = songLink.replace("https://www.youtube.com/watch?v=","");
     songLink = songLink.replace("http://www.youtube.com/watch?v=","");
     songLink = songLink.replace("www.youtube.com/watch?v=","");
     songLink = songLink.replace("youtube.com/watch?v=","");
-    
+
     console.log("The songLink is now : " + songLink);
     myData.makeSongRequest(eventID, songLink, songName).then(function() {
         response.redirect("/song-requests/" + eventID);
@@ -127,21 +127,21 @@ app.post("/vote", function (request, response) {
 });
 
 //The post for the login form the login page
-app.post("/login", function (request, response) { 
+app.post("/login", function (request, response) {
     var user = request.body.username;
     var pass = request.body.password;
-    
+
     if(!user) {
         response.render("pages/login", { pageTitle: "Please enter a username!" });
     }
     else if(!pass) {
         response.render("pages/login", { pageTitle: "Please enter a password!" });
     }
-    
+
     console.log("Checking to see if user is in our database!");
-    
+
     //var a = myData.getUserbyUP(user,pass);
-    
+
     myData.getUserbyUP(user,pass).then(function(result){
         if(result.username==user){
             console.log("Starting to login");
@@ -227,14 +227,13 @@ app.get("/find-events/:id", function (request, response) {
         }).catch(function(err) {
                 console.log(err.message);
                 response.render("pages/login", { pageTitle: "Something went wrong finding Event"});
-        }); 
+        });
 });
 
 //Get route to find all events
 app.get("/find-events", function (request, response) {
     myData.getEvents().then(function (result){
-        var found_events = result;
-        console.log(found_events);
+        var found_events = result; 
         response.render("pages/find-events", { pageTitle: "Find an event!", events: found_events});
     });
 });
@@ -246,9 +245,9 @@ app.post("/profile", cookieParser(), function (request, response) {
     var hob = request.body.hobby;
     var pn = request.body.petName;
     var sid = request.cookies["SessionID"];
-    
+
     console.log(fn+ ", your SessionID is: " + sid);
-    
+
     myData.updateUser(sid, fn, ln, hob, pn).then(function(p1) {
         console.log("My id isL " + sid);
         myData.getUserbyID(sid).then(function(p2){
@@ -270,7 +269,7 @@ app.post("/logout", cookieParser(), function (request, response) {
 });
 
 
-app.get("/", function (request, response) { 
+app.get("/", function (request, response) {
     response.render("pages/login.ejs", { pageTitle: "Signup and Login!"});
 });
 

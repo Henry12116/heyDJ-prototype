@@ -17,8 +17,10 @@
             <hr/>
             <ul>
                 <% events.forEach(function(event) { %>
-                    <h3><%=event.eventName%> </h3>
-                    <li><a href="/find-events/<%= event._id%>"> Hosted by: <%= event.djName%> @ <%= event.location%> with <%= event.attendees%> people!</a></li>
+                      <%if (!event.privateEvent) { %>
+                        <h3><%=event.eventName%> </h3>
+                        <li><a href="/find-events/<%= event._id%>"> Hosted by: <%= event.djName%> @ <%= event.location%> with <%= event.attendees%> people!</a></li>
+                        <% } %>
                     <% }) %>
             </ul>
         </main>
